@@ -18,6 +18,12 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:text="smiple single test functions" />
+    <Button
+        android:layout_margin="5dp"
+        android:id="@+id/reqResBtn"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="www.reqres.in" />
 
 
 </LinearLayout>

@@ -13,6 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".ReqResDotIn"></activity>
         <activity android:name=".ChooseActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,8 +21,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MarsApiActivity"></activity>
-        <activity android:name=".SimpleSingleRequestsActivity"></activity>
+        <activity android:name=".MarsApiActivity" />
+        <activity android:name=".SimpleSingleRequestsActivity" />
     </application>
 
 </manifest>
