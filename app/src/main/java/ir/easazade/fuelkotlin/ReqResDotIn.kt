@@ -3,19 +3,26 @@ package ir.easazade.fuelkotlin
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.github.kittinunf.fuel.core.Body
 import com.github.kittinunf.fuel.core.FuelError
 import com.github.kittinunf.fuel.core.FuelManager
+import com.github.kittinunf.fuel.core.Headers
 import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.fuel.core.Response
 import com.github.kittinunf.fuel.core.ResponseDeserializable
 import com.github.kittinunf.fuel.core.ResponseResultHandler
+import com.github.kittinunf.fuel.core.extensions.jsonBody
 import com.github.kittinunf.fuel.gson.responseObject
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.fuel.rx.rxResponseString
 import com.github.kittinunf.result.Result
 import com.google.gson.Gson
+import io.reactivex.Observable
+import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 
 class ReqResDotIn : AppCompatActivity() {
 
@@ -77,11 +84,44 @@ class ReqResDotIn : AppCompatActivity() {
 
   fun createUser(v: View) {
     "/api/users"
-      .httpPost(parameters = listOf("name" to "alireza", "job" to "programmer"))
+      .httpPost()
+      .apply { parameters = listOf("name" to "alireza", "job" to "programmer") }
       .responseString { request, response, result ->
+        log(request)
         log(response.statusCode)
         log(response.body().jsonPrettyPrint())
       }
+  }
+
+  fun createUserExplicitBodyDefining(v: View) {
+    "/api/users"
+      .httpPost()
+      .jsonBody("{\"name\":\"alireza\",\"job\":\"programmer\"}")
+      .responseString { request, response, result ->
+        log(request)
+        log(response.statusCode)
+        log(response.body().jsonPrettyPrint())
+      }
+  }
+
+  fun getSingleUserBlockingMode(v: View) {
+    //blocking current thread
+    //this will return an error but it will not crash the app as it will be in result.component2().exception
+    //make sure to always handle FuelErrors
+//    val (request, response, result) = "/api/users/2".httpGet().response()
+//    log(request)
+//    log(response.statusCode)
+//    log(response.body().jsonPrettyPrint())
+//    log(result.component2()?.exception ?: "")
+
+    subscrptions.add(Observable.create<String> { emitter ->
+      val (request, response, result) = "/api/users/2".httpGet().response()
+      emitter.onNext(response.body().jsonPrettyPrint())
+    }.subscribeOn(Schedulers.io())
+      .observeOn(AndroidSchedulers.mainThread())
+      .subscribe { response ->
+        log(response)
+      })
   }
 }
 
