@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Fuel Kotlin</string>
+    <string name="desc">choose a function from Activity class and set it on the send request button</string>
 </resources>

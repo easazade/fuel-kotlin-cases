@@ -7,7 +7,7 @@ import com.github.kittinunf.fuel.httpGet
 import kotlinx.android.synthetic.main.activity_main.sendRequestBtn
 import java.net.URL
 
-class MainActivity : AppCompatActivity() {
+class SimpleSingleRequestsActivity : AppCompatActivity() {
 
   /*
   About PATCH requests
