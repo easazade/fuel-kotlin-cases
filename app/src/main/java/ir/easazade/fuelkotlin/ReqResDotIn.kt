@@ -3,6 +3,7 @@ package ir.easazade.fuelkotlin
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.core.Body
 import com.github.kittinunf.fuel.core.FuelError
 import com.github.kittinunf.fuel.core.FuelManager
@@ -13,6 +14,7 @@ import com.github.kittinunf.fuel.core.ResponseDeserializable
 import com.github.kittinunf.fuel.core.ResponseResultHandler
 import com.github.kittinunf.fuel.core.extensions.jsonBody
 import com.github.kittinunf.fuel.gson.responseObject
+import com.github.kittinunf.fuel.httpDownload
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.fuel.rx.rxResponseString
@@ -23,16 +25,23 @@ import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import org.json.JSONObject
 
 class ReqResDotIn : AppCompatActivity() {
 
   val subscrptions = CompositeDisposable()
 
+  //TODO lots of stud in this article https://www.baeldung.com/kotlin-fuel
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_req_res_dot_in)
 
-    FuelManager.instance.basePath = "https://reqres.in"
+    FuelManager.instance.apply {
+      basePath = "https://reqres.in"
+//      baseHeaders = mapOf(Headers.CONTENT_TYPE to "application/json")
+      addRequestInterceptor(tokenInterceptor())
+    }
   }
 
   fun listUsers(v: View) {
@@ -84,8 +93,8 @@ class ReqResDotIn : AppCompatActivity() {
 
   fun createUser(v: View) {
     "/api/users"
-      .httpPost()
-      .apply { parameters = listOf("name" to "alireza", "job" to "programmer") }
+      .httpPost(listOf("name" to "alireza", "job" to "programmer"))
+//      .appendHeader(Headers.CONTENT_TYPE to "application/json") //if i add this line params not going to body
       .responseString { request, response, result ->
         log(request)
         log(response.statusCode)
@@ -94,9 +103,22 @@ class ReqResDotIn : AppCompatActivity() {
   }
 
   fun createUserExplicitBodyDefining(v: View) {
+
+    val params = mapOf(
+      "name" to "alireza",
+      "job" to "programmer",
+      "car" to mapOf(
+        "name" to "pride",
+        "power" to "758-HP"
+      )
+    )
+    log(params)
+    log(JSONObject(params))
+
     "/api/users"
       .httpPost()
-      .jsonBody("{\"name\":\"alireza\",\"job\":\"programmer\"}")
+//      .jsonBody()
+      .jsonBody(JSONObject(params).toString())
       .responseString { request, response, result ->
         log(request)
         log(response.statusCode)
@@ -115,13 +137,22 @@ class ReqResDotIn : AppCompatActivity() {
 //    log(result.component2()?.exception ?: "")
 
     subscrptions.add(Observable.create<String> { emitter ->
-      val (request, response, result) = "/api/users/2".httpGet().response()
+      val (request, response, result) = "/api/users/2"
+        .httpGet()
+        .response() //or responseString()
       emitter.onNext(response.body().jsonPrettyPrint())
     }.subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())
       .subscribe { response ->
         log(response)
       })
+  }
+
+  fun tokenInterceptor() = { next: (Request) -> Request ->
+    { req: Request ->
+      req.header(mapOf("Authorization" to "Bearer AbCdEf123456"))
+      next(req)
+    }
   }
 }
 
