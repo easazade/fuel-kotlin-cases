@@ -13,6 +13,7 @@ import com.github.kittinunf.fuel.core.Response
 import com.github.kittinunf.fuel.core.ResponseDeserializable
 import com.github.kittinunf.fuel.core.ResponseResultHandler
 import com.github.kittinunf.fuel.core.extensions.jsonBody
+import com.github.kittinunf.fuel.core.requests.tryCancel
 import com.github.kittinunf.fuel.gson.responseObject
 import com.github.kittinunf.fuel.httpDownload
 import com.github.kittinunf.fuel.httpGet
@@ -102,6 +103,22 @@ class ReqResDotIn : AppCompatActivity() {
       }
   }
 
+  fun createUser_serializeUsingGson(v: View) {
+    val user = ReqResUser(
+      12, "alireza", "easazade",
+      "http://alirezaeasazade.ir/img/alireza.png"
+    )
+
+    "api/users"
+      .httpPost()
+      .jsonBody(Gson().toJson(user))
+      .responseString { request, response, result ->
+        log(request)
+        log(response.statusCode)
+        log(response.body().jsonPrettyPrint())
+      }
+  }
+
   fun createUserExplicitBodyDefining(v: View) {
 
     val params = mapOf(
@@ -141,6 +158,7 @@ class ReqResDotIn : AppCompatActivity() {
         .httpGet()
         .response() //or responseString()
       emitter.onNext(response.body().jsonPrettyPrint())
+
     }.subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())
       .subscribe { response ->
