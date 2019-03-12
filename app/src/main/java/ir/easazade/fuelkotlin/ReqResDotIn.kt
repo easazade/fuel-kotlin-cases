@@ -158,7 +158,6 @@ class ReqResDotIn : AppCompatActivity() {
         .httpGet()
         .response() //or responseString()
       emitter.onNext(response.body().jsonPrettyPrint())
-
     }.subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())
       .subscribe { response ->

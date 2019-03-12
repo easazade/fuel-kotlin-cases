@@ -2,6 +2,10 @@ package ir.easazade.fuelkotlin
 
 import androidx.test.InstrumentationRegistry
 import androidx.test.runner.AndroidJUnit4
+import com.github.kittinunf.fuel.core.Client
+import com.github.kittinunf.fuel.core.Request
+import com.github.kittinunf.fuel.core.Response
+import com.github.kittinunf.fuel.core.ResponseOf
 
 import org.junit.Test
 import org.junit.runner.RunWith

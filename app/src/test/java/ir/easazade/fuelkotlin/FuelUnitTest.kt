@@ -43,7 +43,6 @@ class FuelUnitTest {
     every { client.executeRequest(any()).responseMessage } returns "OK"
     every { client.executeRequest(any()).data } returns json.toByteArray()
     every { client.executeRequest(any()).body() } returns JSONTestBody(json)
-    every { client.executeRequest(any()) }
     //when
     val (request, response, result) = "https://site/user/1"
       .httpGet()
