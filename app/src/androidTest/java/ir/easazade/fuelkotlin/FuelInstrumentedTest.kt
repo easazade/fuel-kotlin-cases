@@ -4,11 +4,11 @@ import android.content.Context
 import android.util.Log
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.AndroidJUnit4
-import com.github.kittinunf.fuel.core.Client
 import com.github.kittinunf.fuel.core.FuelManager
+import com.github.kittinunf.fuel.core.Response
 import com.github.kittinunf.fuel.httpGet
+import org.json.JSONObject
 import org.junit.*
-import org.junit.Assert.*
 import org.junit.runner.*
 import java.util.concurrent.CountDownLatch
 
@@ -22,7 +22,7 @@ class FuelInstrumentedTest {
 
 
   lateinit var appContext: Context
-  lateinit var client: Client
+  lateinit var client: FakeClient
 
   @Before
   fun setup() {
@@ -37,14 +37,21 @@ class FuelInstrumentedTest {
 
   @Test
   fun fuelTest() {
-    Log.d("apppp", "starting test")
+    //with
     val signal = CountDownLatch(1)
-    var flag = false
+    client.handleRequest = { request ->
+      Response(
+        request.url, 200,
+        body = FakeBody(
+          JSONObject(mapOf("name" to "alireza")).toString()
+        )
+      )
+    }
+    //when
     "https://marsapp.ir/"
       .httpGet()
       .responseString { request, response, result ->
-        flag = true
-        Log.d("apppp", "inside response")
+        //then
         Log.d(
           "apppp",
           "${response.url} ${response.statusCode} ${response.body().asString("text/json")} ${response.contentLength}"
@@ -52,8 +59,6 @@ class FuelInstrumentedTest {
         signal.countDown()
       }
     signal.await()
-    Log.d("apppp", "after wait")
-    assertTrue(flag)
   }
 }
 
