@@ -4,11 +4,17 @@ import android.content.Context
 import android.util.Log
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.AndroidJUnit4
+import com.github.kittinunf.fuel.core.FuelError
 import com.github.kittinunf.fuel.core.FuelManager
+import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.fuel.core.Response
+import com.github.kittinunf.fuel.core.ResponseDeserializable
 import com.github.kittinunf.fuel.httpGet
+import com.github.kittinunf.result.Result
+import com.google.gson.Gson
 import org.json.JSONObject
 import org.junit.*
+import org.junit.Assert.*
 import org.junit.runner.*
 import java.util.concurrent.CountDownLatch
 
@@ -59,6 +65,31 @@ class FuelInstrumentedTest {
         signal.countDown()
       }
     signal.await()
+  }
+
+  @Test
+  fun responseObject() {
+    //with
+    val alireza = ReqResUser(5L, "alireza", "easazade", "https://avatr.png")
+    client.handleRequest = { request ->
+      Response(
+        request.url, 200,
+        body = FakeBody(
+          Gson().toJson(alireza)
+        )
+      )
+    }
+    //when
+    val (request, response, result) = "https://marsapp.ir/do/some"
+      .httpGet()
+      .responseObject(object : ResponseDeserializable<ReqResUser> {
+        override fun deserialize(content: String): ReqResUser? {
+          return Gson().fromJson(content, ReqResUser::class.java)
+        }
+      })
+
+    assertNotNull(result.component1())
+    assertNull(result.component2())
   }
 }
 

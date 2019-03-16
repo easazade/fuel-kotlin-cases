@@ -8,6 +8,7 @@ import com.github.kittinunf.fuel.core.Body
 import com.github.kittinunf.fuel.core.FuelError
 import com.github.kittinunf.fuel.core.FuelManager
 import com.github.kittinunf.fuel.core.Headers
+import com.github.kittinunf.fuel.core.Parameters
 import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.fuel.core.Response
 import com.github.kittinunf.fuel.core.ResponseDeserializable
@@ -17,6 +18,7 @@ import com.github.kittinunf.fuel.core.requests.tryCancel
 import com.github.kittinunf.fuel.gson.responseObject
 import com.github.kittinunf.fuel.httpDownload
 import com.github.kittinunf.fuel.httpGet
+import com.github.kittinunf.fuel.httpPatch
 import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.fuel.rx.rxResponseString
 import com.github.kittinunf.result.Result
@@ -163,6 +165,16 @@ class ReqResDotIn : AppCompatActivity() {
       .subscribe { response ->
         log(response)
       })
+  }
+
+  fun patchRequest(v: View) {
+    "api/users/2"
+      .httpPatch(listOf("name" to "alireza","email" to "easazade@gmail.com"))
+      .responseString { request, response, result ->
+        log(request)
+        log(response.statusCode)
+        log(response.body().jsonPrettyPrint())
+      }
   }
 
   fun tokenInterceptor() = { next: (Request) -> Request ->
