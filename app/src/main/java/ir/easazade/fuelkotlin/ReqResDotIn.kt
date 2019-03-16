@@ -16,6 +16,7 @@ import com.github.kittinunf.fuel.core.ResponseResultHandler
 import com.github.kittinunf.fuel.core.extensions.jsonBody
 import com.github.kittinunf.fuel.core.requests.tryCancel
 import com.github.kittinunf.fuel.gson.responseObject
+import com.github.kittinunf.fuel.httpDelete
 import com.github.kittinunf.fuel.httpDownload
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPatch
@@ -169,11 +170,21 @@ class ReqResDotIn : AppCompatActivity() {
 
   fun patchRequest(v: View) {
     "api/users/2"
-      .httpPatch(listOf("name" to "alireza","email" to "easazade@gmail.com"))
+      .httpPatch(listOf("name" to "alireza", "email" to "easazade@gmail.com"))
       .responseString { request, response, result ->
         log(request)
         log(response.statusCode)
         log(response.body().jsonPrettyPrint())
+      }
+  }
+
+  fun deleteRequest(v: View) {
+    "api/users/2"
+      .httpDelete()
+      .responseString { request, response, result ->
+        log(request)
+        log(response.statusCode)
+        log(response.body())
       }
   }
 

@@ -107,14 +107,22 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:text="patch request"
-            android:onClick="patchRequest"
             android:layout_margin="15dp"
             android:background="#fff"
+            android:onClick="patchRequest"
+            android:text="patch request"
             android:textColor="#f00"
             android:textSize="16sp" />
 
-
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_margin="15dp"
+            android:background="#fff"
+            android:onClick="deleteRequest"
+            android:text="delete request"
+            android:textColor="#f00"
+            android:textSize="16sp" />
 
 
     </LinearLayout>
