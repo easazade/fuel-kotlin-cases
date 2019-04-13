@@ -3,21 +3,13 @@ package ir.easazade.fuelkotlin
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.github.kittinunf.fuel.Fuel
-import com.github.kittinunf.fuel.core.Body
 import com.github.kittinunf.fuel.core.FuelError
 import com.github.kittinunf.fuel.core.FuelManager
-import com.github.kittinunf.fuel.core.Headers
-import com.github.kittinunf.fuel.core.Parameters
 import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.fuel.core.Response
-import com.github.kittinunf.fuel.core.ResponseDeserializable
-import com.github.kittinunf.fuel.core.ResponseResultHandler
 import com.github.kittinunf.fuel.core.extensions.jsonBody
-import com.github.kittinunf.fuel.core.requests.tryCancel
 import com.github.kittinunf.fuel.gson.responseObject
 import com.github.kittinunf.fuel.httpDelete
-import com.github.kittinunf.fuel.httpDownload
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPatch
 import com.github.kittinunf.fuel.httpPost
@@ -25,11 +17,11 @@ import com.github.kittinunf.fuel.rx.rxResponseString
 import com.github.kittinunf.result.Result
 import com.google.gson.Gson
 import io.reactivex.Observable
-import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import org.json.JSONObject
+import java.io.File
 
 class ReqResDotIn : AppCompatActivity() {
 
@@ -43,7 +35,6 @@ class ReqResDotIn : AppCompatActivity() {
 
     FuelManager.instance.apply {
       basePath = "https://reqres.in"
-//      baseHeaders = mapOf(Headers.CONTENT_TYPE to "application/json")
       addRequestInterceptor(tokenInterceptor())
     }
   }
@@ -96,14 +87,15 @@ class ReqResDotIn : AppCompatActivity() {
   }
 
   fun createUser(v: View) {
-    "/api/users"
-      .httpPost(listOf("name" to "alireza", "job" to "programmer"))
-//      .appendHeader(Headers.CONTENT_TYPE to "application/json") //if i add this line params not going to body
-      .responseString { request, response, result ->
-        log(request)
-        log(response.statusCode)
-        log(response.body().jsonPrettyPrint())
-      }
+//    "/api/users"
+//      .httpPost(listOf("name" to "alireza", "job" to "programmer"))
+////      .appendHeader(Headers.CONTENT_TYPE to "application/json") //if i add this line params not going to body
+//      .responseString { request, response, result ->
+//        log(request)
+//        log(response.statusCode)
+//        log(response.body().jsonPrettyPrint())
+//      }
+
   }
 
   fun createUser_serializeUsingGson(v: View) {

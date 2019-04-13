@@ -1,10 +1,15 @@
 package ir.easazade.fuelkotlin
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.github.kittinunf.fuel.Fuel
+import com.github.kittinunf.fuel.core.FileDataPart
+import com.github.kittinunf.fuel.core.InlineDataPart
 import com.github.kittinunf.fuel.httpGet
+import com.github.kittinunf.fuel.httpUpload
 import kotlinx.android.synthetic.main.activity_main.sendRequestBtn
+import java.io.File
 import java.net.URL
 
 class SimpleSingleRequestsActivity : AppCompatActivity() {
@@ -21,7 +26,7 @@ class SimpleSingleRequestsActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
     sendRequestBtn.setOnClickListener {
-      getWithParams()
+      myWonHost_multiPartFormData()
     }
   }
 
@@ -61,6 +66,22 @@ class SimpleSingleRequestsActivity : AppCompatActivity() {
         }, {
           println("result is unsuccessful")
         })
+      }
+  }
+
+  private fun myWonHost_multiPartFormData() {
+    val file = FileUtilsLegacy.getFileFromAssetsAndCopyToCache("image2.jpg", ".jpg", this)
+    "http://alirezaeasazade.ir/upload.php"
+      .httpUpload()
+      .add(InlineDataPart("alireza", "username"))
+      .add(InlineDataPart("awesome", "titles[0]"))
+      .add(InlineDataPart("best programmer", "titles[1]"))
+      .add(InlineDataPart("kotlin programmer", "titles[2]"))
+      .add(FileDataPart(file, name = "fileToUpload"))
+      .responseString { request, response, result ->
+        log(request)
+        log(response.statusCode)
+        log(response.body().jsonPrettyPrint())
       }
   }
 }

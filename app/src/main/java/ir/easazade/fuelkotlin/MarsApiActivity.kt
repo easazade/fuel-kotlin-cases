@@ -91,7 +91,7 @@ class MarsApiActivity : AppCompatActivity() {
   }
 
   fun createDesign(v: View) {
-    val file: File = FileUtilsLegacy.getFileFromAssetsAndCopyToCache("image2.jpg", this)
+    val file: File = FileUtilsLegacy.getFileFromAssetsAndCopyToCache("image2.jpg",".jpg", this)
 
     "designs/create"
       .httpUpload(

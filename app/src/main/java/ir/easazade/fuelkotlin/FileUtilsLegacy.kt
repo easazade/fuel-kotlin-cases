@@ -15,9 +15,71 @@ import timber.log.Timber
 import java.io.*
 import java.util.Random
 
-fun generateImageFileName(): String {
+fun generateRandomFileName(extension: String): String {
+  if (extension[0] != '.') throw RuntimeException("extension needs to start with a dot like -> .jpg , .pdf")
   val rand = Random()
-  val letters = arrayOf("postExecute", "b", "c", "d", "e", "preExecute", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "1", "2", "3", "4", "5", "6", "7", "8", "9")
+  val letters = arrayOf(
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
+    "g",
+    "h",
+    "i",
+    "j",
+    "k",
+    "l",
+    "m",
+    "n",
+    "o",
+    "p",
+    "q",
+    "r",
+    "s",
+    "t",
+    "u",
+    "v",
+    "w",
+    "x",
+    "y",
+    "z",
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "P",
+    "Q",
+    "R",
+    "S",
+    "T",
+    "U",
+    "V",
+    "W",
+    "X",
+    "Y",
+    "Z",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  )
 
   var imageFileName = ""
   for (i in 0..9) {
@@ -25,7 +87,7 @@ fun generateImageFileName(): String {
     imageFileName += letters[x]
   }
 
-  return imageFileName
+  return imageFileName + extension
 }
 
 class FileUtilsLegacy {
@@ -257,19 +319,17 @@ class FileUtilsLegacy {
       return bitmap
     }
 
-
-
     fun uriFromFile(file: File?): Uri = Uri.fromFile(file)
 
     /**
      * files in the assets directory don't get unpacked. Instead, they are read directly from the APK
      */
-    fun getFileFromAssetsAndCopyToCache(dir: String, context: Context): File {
-      val outputCacheFile = File(context.cacheDir, generateImageFileName())
+    fun getFileFromAssetsAndCopyToCache(path: String, extensionWithDot: String, context: Context): File {
+      val outputCacheFile = File(context.cacheDir, generateRandomFileName(extensionWithDot))
       var fos: FileOutputStream? = null
       try {
         //read file
-        val inputStream = context.assets.open(dir)
+        val inputStream = context.assets.open(path)
         val size = inputStream.available()
         val buffer = ByteArray(size)
         inputStream.read(buffer)
@@ -301,7 +361,7 @@ class FileUtilsLegacy {
     ): Observable<File> {
       return Observable.create { observer ->
         //we create postExecute file in our app cache dir
-        val file = File(activity.cacheDir, generateImageFileName())
+        val file = File(activity.cacheDir, generateRandomFileName(".png"))
         val outPutStream = BufferedOutputStream(FileOutputStream(file))
         bitmap?.let {
           bitmap.compress(Bitmap.CompressFormat.PNG, 100, outPutStream)
@@ -311,28 +371,28 @@ class FileUtilsLegacy {
       }
     }
 
-    fun createAppFileFromUri(context: Context, uri: Uri): File {
-      val bitmap = FileUtilsLegacy.bitmapFromUri(context, uri)
-      val file = File(context.filesDir, generateImageFileName())
-      val outputStream = BufferedOutputStream(FileOutputStream(file))
-      bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-      outputStream.close()
-      return file
-    }
-
-    fun createCacheFileFromBitmap(
-      activity: androidx.fragment.app.FragmentActivity,
-      bitmap: Bitmap?
-    ): File {
-      //we create postExecute file in our app cache dir
-      val file = File(activity.cacheDir, generateImageFileName())
-      val outPutStream = BufferedOutputStream(FileOutputStream(file))
-      bitmap?.let {
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outPutStream)
-      }
-      outPutStream.close()
-      return file
-    }
+//    fun createAppFileFromUri(context: Context, uri: Uri): File {
+//      val bitmap = FileUtilsLegacy.bitmapFromUri(context, uri)
+//      val file = File(context.filesDir, generateRandomFileName())
+//      val outputStream = BufferedOutputStream(FileOutputStream(file))
+//      bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+//      outputStream.close()
+//      return file
+//    }
+//
+//    fun createCacheFileFromBitmap(
+//      activity: androidx.fragment.app.FragmentActivity,
+//      bitmap: Bitmap?
+//    ): File {
+//      //we create postExecute file in our app cache dir
+//      val file = File(activity.cacheDir, generateRandomFileName())
+//      val outPutStream = BufferedOutputStream(FileOutputStream(file))
+//      bitmap?.let {
+//        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outPutStream)
+//      }
+//      outPutStream.close()
+//      return file
+//    }
 
     /***
      * large images cause out of memory exception this method first checks the resource image
